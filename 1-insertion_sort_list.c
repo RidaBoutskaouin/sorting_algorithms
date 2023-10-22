@@ -16,48 +16,24 @@ void insertion_sort_list(listint_t **list)
 		return;
 
 	current = *list;
-	next = current->next;
-
-	while (next != NULL)
+	while (current != NULL)
 	{
-		prev = current;
 		next = current->next;
-		if (current->n > next->n)
+		prev = current->prev;
+		while (prev != NULL && prev->n > current->n)
 		{
-			swap_nodes(current, next, list);
-			current = prev;
+			if (prev->prev != NULL)
+				prev->prev->next = current;
+			else
+				*list = current;
+			if (current->next != NULL)
+				current->next->prev = prev;
+			prev->next = current->next;
+			current->prev = prev->prev;
+			prev->prev = current;
+			current->next = prev;
 			print_list(*list);
+			prev = current->prev;
 		}
-		current = current->next;
+		current = next;
 	}
-}
-
-
-/**
- * swap_nodes - swaps two nodes in a doubly linked list
- * @current: current node
- * @next: next node
- * @list: doubly linked list
- * Return: void
- */
-
-void swap_nodes(listint_t *current, listint_t *next, listint_t **list)
-{
-	listint_t *prev, *next_next;
-
-	prev = current->prev;
-	next_next = next->next;
-
-	if (prev != NULL)
-		prev->next = next;
-	else
-		*list = next;
-
-	next->prev = prev;
-	next->next = current;
-	current->prev = next;
-	current->next = next_next;
-
-	if (next_next != NULL)
-		next_next->prev = current;
-}
